@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>One Stop Inventing - Confidentiality Form</title>
+    <link rel="stylesheet" href="form-style.css" />
+  </head>
+  <body>
+    <div class="one-stop-inv grid-wrapper">
+      <div class="grid-background"></div>
+      <div class="container">
+        <div class="header">
+          <h1 class="form-heading">Confidentiality Form</h1>
+          <h2 class="form-subheading">Confidential Idea Submission</h2>
+          <p>
+            Submit your invention information confidentially to speak with our
+            product designers and consultants for an idea review.
+          </p>
+        </div>
+
+        <div class="progress-container">
+          <div class="step-indicator">
+            Step <span id="currentStep" class="current-step">1</span> of 3
+          </div>
+          <div class="progress-bar">
+            <div
+              class="progress-fill progress-fill-bar"
+              id="progressFill"
+            ></div>
+          </div>
+        </div>
+
+        <form
+          id="confidentialityForm"
+          class="confidentiality-form"
+          action="https://form-code-backend.vercel.app/submit-form"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <!-- Step 1 -->
+          <div class="form-step step1" id="step1">
+            <div class="form-group">
+              <label class="required">Name</label>
+              <div class="form-row">
+                <div class="form-field">
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First"
+                    required
+                  />
+                </div>
+                <div class="form-field">
+                  <input type="text" name="lastName" placeholder="Last" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="email-label required">Email</label>
+              <input type="email" name="email" class="email-input" required />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Phone</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                class="phone-input"
+                placeholder="(___) ___-____"
+                maxlength="14"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Is this an app idea?</label>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="appIdea"
+                    value="Yes"
+                    id="appYes"
+                  />
+                  <label for="appYes">Yes</label>
+                </div>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="appIdea"
+                    value="No"
+                    id="appNo"
+                    checked
+                  />
+                  <label for="appNo">No</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Captcha*</label>
+              <div class="captcha-container">
+                <div class="captcha-display captcha-text" id="captchaDisplay">
+                  AB12
+                </div>
+                <button
+                  type="button"
+                  class="refresh-btn"
+                  onclick="generateCaptcha()"
+                >
+                  🔄
+                </button>
+              </div>
+              <input
+                type="text"
+                name="captcha"
+                class="captcha-input"
+                placeholder="Enter captcha code"
+                required
+              />
+            </div>
+
+            <div class="terms-checkbox">
+              <input
+                type="checkbox"
+                name="terms"
+                id="terms"
+                class="terms-input"
+                required
+              />
+              <label for="terms" class="terms-label"
+                >I agree that my idea will remain confidential and I have read
+                the Privacy Policy and Confidentiality Agreement.</label
+              >
+            </div>
+
+            <button type="button" class="next-btn" onclick="goToStep(2)">
+              Next
+            </button>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="form-step step2" id="step2" style="display: none">
+            <div class="form-group">
+              <label>Invention Name</label>
+              <input
+                type="text"
+                name="inventionName"
+                placeholder="Enter invention name"
+              />
+              <p class="file-info">0 of 65 max characters</p>
+            </div>
+
+            <div class="form-group">
+              <label>What industry does your invention serve?</label>
+              <div class="radio-group">
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Medical"
+                    id="industry_medical"
+                  />
+                  <label for="industry_medical">Medical</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Transportation"
+                    id="industry_transportation"
+                  />
+                  <label for="industry_transportation">Transportation</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Entertainment"
+                    id="industry_entertainment"
+                  />
+                  <label for="industry_entertainment">Entertainment</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Electronics"
+                    id="industry_electronics"
+                  />
+                  <label for="industry_electronics">Electronics</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Household"
+                    id="industry_household"
+                  />
+                  <label for="industry_household">Household</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Tools"
+                    id="industry_tools"
+                  />
+                  <label for="industry_tools">Tools</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="industry"
+                    value="Other"
+                    id="industry_other"
+                  />
+                  <label for="industry_other">Other</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>What are you trying to accomplish with your idea?</label>
+              <div class="radio-group">
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="goals"
+                    value="Turn My Idea Into A Business"
+                    id="goals_business"
+                  />
+                  <label for="goals_business"
+                    >Turn My Idea Into A Business</label
+                  >
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="goals"
+                    value="Manufacture/Develop My Idea"
+                    id="goals_manufacture"
+                  />
+                  <label for="goals_manufacture"
+                    >Manufacture/Develop My Idea</label
+                  >
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="goals"
+                    value="Sell My Idea"
+                    id="goals_sell"
+                  />
+                  <label for="goals_sell">Sell My Idea</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="goals"
+                    value="License My Idea"
+                    id="goals_license"
+                  />
+                  <label for="goals_license">License My Idea</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="goals"
+                    value="Nothing"
+                    id="goals_nothing"
+                  />
+                  <label for="goals_nothing">Nothing</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="goals"
+                    value="What The Experts Recommend"
+                    id="goals_experts"
+                  />
+                  <label for="goals_experts">What The Experts Recommend</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label
+                >Have you ever tried developing your idea with another
+                company?</label
+              >
+              <div class="radio-group">
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="previousCompanies"
+                    value="Yes"
+                    id="previous_yes"
+                  />
+                  <label for="previous_yes">Yes</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="previousCompanies"
+                    value="No"
+                    id="previous_no"
+                    checked
+                  />
+                  <label for="previous_no">No</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    name="previousCompanies"
+                    value="Other"
+                    id="previous_other"
+                  />
+                  <label for="previous_other">Other</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="buttons">
+              <button type="button" class="prev-btn" onclick="goToStep(1)">
+                Previous
+              </button>
+              <button type="button" class="next-btn" onclick="goToStep(3)">
+                Next
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="form-step step3" id="step3" style="display: none">
+            <div class="form-group">
+              <label
+                >What problem does your idea solve? What Makes it Unique?</label
+              >
+              <textarea
+                name="problemSolved"
+                placeholder="Describe the problem your invention solves and its unique features..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label
+                >If any, please list similar inventions or products, if none
+                leave blank.</label
+              >
+              <textarea
+                name="similarInventions"
+                placeholder="List similar inventions or products..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Brief invention description (Optional)</label>
+              <textarea
+                name="description"
+                placeholder="Provide a brief description of your invention..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>What is your budget to develop your product?</label>
+              <p>
+                Please select the inventor profile that best matches you in
+                order to better assist our invention to product plan.
+              </p>
+
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="Yes"
+                    id="budgetYes"
+                  />
+                  <label for="budgetYes">$0</label>
+                </div>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="No"
+                    id="budgetNo"
+                    checked
+                  />
+                  <label for="budgetNo">$100-$600 (Starting Inventor)</label>
+                </div>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="Other"
+                    id="budgetOther"
+                  />
+                  <label for="budgetOther"
+                    >$2000-$5000 (Intermediate Inventor)</label
+                  >
+                </div>
+
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="Other"
+                    id="budgetAdvanced"
+                  />
+                  <label for="budgetAdvanced"
+                    >$9000-$20000 (Advanced Inventor)</label
+                  >
+                </div>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="Other"
+                    id="budgetProfessional"
+                  />
+                  <label for="budgetProfessional"
+                    >$20000+ (Professional Entrepreneur/Inventor)</label
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label
+                >Do you have a set budget to start your invention
+                business?</label
+              >
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="Yes"
+                    id="budgetYes"
+                  />
+                  <label for="budgetYes">Yes</label>
+                </div>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="No"
+                    id="budgetNo"
+                    checked
+                  />
+                  <label for="budgetNo">No</label>
+                </div>
+                <div class="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name="budget"
+                    value="Other"
+                    id="budgetOther"
+                  />
+                  <label for="budgetOther">Other</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Sketch Upload (optional)</label>
+
+              <p class="file-info">
+                It is recommended to upload a sketch or picture of your idea or
+                app so that we can better understand the product in order to
+                execute development.
+              </p>
+            </div>
+
+            <div class="form-group file-upload-section">
+              <label>File</label>
+              <p>
+                It is recommended to upload a sketch or picture of your idea or
+                app so that we can better understand the product in order to
+                execute development.
+              </p>
+              <input
+                type="file"
+                name="sketch"
+                class="file-input"
+                accept=".jpg,.jpeg,.png,.pdf"
+              />
+              <div class="file-info">Max. file size: 512 MB</div>
+            </div>
+
+            <div class="buttons">
+              <button type="button" class="prev-btn" onclick="goToStep(2)">
+                Previous
+              </button>
+              <button type="submit" class="submit-btn">Submit</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="footer-link">
+          <a href="#">Confidentiality Form</a>
+        </div>
+      </div>
+    </div>
+    <script src="form-script.js"></script>
+  </body>
+</html>
