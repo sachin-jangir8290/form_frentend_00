@@ -251,6 +251,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Make budget profile checkboxes mutually exclusive (radio button behavior)
+  const budgetProfileCheckboxes = document.querySelectorAll(
+    'input[name="budgetProfile"]'
+  );
+  budgetProfileCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      if (this.checked) {
+        budgetProfileCheckboxes.forEach((cb) => {
+          if (cb !== this) cb.checked = false;
+        });
+      }
+    });
+  });
+
   // Handle form submission
   document
     .getElementById("confidentialityForm")
