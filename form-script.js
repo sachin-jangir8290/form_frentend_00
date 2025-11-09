@@ -265,6 +265,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Make hasSetBudget checkboxes mutually exclusive (radio button behavior)
+  const hasSetBudgetCheckboxes = document.querySelectorAll(
+    'input[name="hasSetBudget"]'
+  );
+  hasSetBudgetCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      if (this.checked) {
+        hasSetBudgetCheckboxes.forEach((cb) => {
+          if (cb !== this) cb.checked = false;
+        });
+      }
+    });
+  });
+
   // Handle form submission
   document
     .getElementById("confidentialityForm")
@@ -281,6 +295,12 @@ document.addEventListener("DOMContentLoaded", () => {
       showLoadingSpinner();
 
       const formData = new FormData(e.target);
+
+      // Debug: Log form data being sent
+      console.log("Form data being sent:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
 
       try {
         const response = await fetch(
