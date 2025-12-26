@@ -242,6 +242,20 @@
   border-radius: 50%;
 }
 
+.one-stop-inv .other_feild {
+  margin-left: 35px;
+  margin-top: 10px;
+  display: none !important;
+}
+
+.one-stop-inv .other_feild input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
 .one-stop-inv .terms-checkbox {
   margin: 20px 0;
   display: flex;
@@ -331,6 +345,12 @@
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
+  gap: 15px;
+}
+
+.one-stop-inv .buttons button {
+  flex: 1;
+  max-width: 200px;
 }
 
 .one-stop-inv .prev-btn,

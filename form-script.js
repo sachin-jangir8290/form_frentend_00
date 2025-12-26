@@ -1,48 +1,15 @@
 let currentStep = 1;
 
-function showLoadingSpinner() {
-  // Remove any existing spinner
-  const existingSpinner = document.querySelector(".loading-overlay");
-  if (existingSpinner) {
-    existingSpinner.remove();
-  }
-
-  // Create loading overlay
-  const overlay = document.createElement("div");
-  overlay.className = "loading-overlay";
-
-  // Create spinner HTML
-  overlay.innerHTML = `
-    <div class="pl">
-      <svg class="pl__rings" viewBox="0 0 128 128" width="128px" height="128px">
-        <g fill="none" stroke-linecap="round" stroke-width="4">
-          <g class="pl__ring">
-            <circle class="pl__ring" r="56" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-          </g>
-          <g class="pl__ring">
-            <circle class="pl__ring" r="52" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-          </g>
-          <g class="pl__ring">
-            <circle class="pl__ring" r="48" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-          </g>
-          <g class="pl__ring">
-            <circle class="pl__ring" r="44" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-          </g>
-        </g>
-        <g fill="none" class="pl__worm">
-          <path class="pl__worm" d="M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938,21.267,27.165,20.755,40.049-.76,19.438-33.841,22.079-42.234,9.772C27.72,34.562,85.19,22.688,92,15.492Z"></path>
-        </g>
-      </svg>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-}
-
-function hideLoadingSpinner() {
-  const spinner = document.querySelector(".loading-overlay");
-  if (spinner) {
-    spinner.remove();
+// Captcha functionality (for index.html)
+function generateCaptcha() {
+  const captchaDisplay = document.getElementById("captchaDisplay");
+  if (captchaDisplay) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < 4; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    captchaDisplay.textContent = result;
   }
 }
 
@@ -70,6 +37,9 @@ function goToStep(stepNumber) {
 
   // Update step indicator
   document.getElementById("currentStep").textContent = currentStep;
+
+  // Resize iframe after step change
+  resizeIframe();
 }
 
 function validateCurrentStep() {
@@ -78,7 +48,6 @@ function validateCurrentStep() {
     "input[required], select[required], textarea[required]"
   );
   let firstEmptyField = null;
-  let validationMessages = [];
 
   // Clear previous error styling and messages
   stepElement.querySelectorAll(".error-field").forEach((field) => {
@@ -113,12 +82,6 @@ function validateCurrentStep() {
       if (!firstEmptyField) {
         firstEmptyField = emailField;
       }
-    } else if (!emailField.value && emailField.hasAttribute("required")) {
-      emailField.classList.add("error-field");
-      addErrorMessage(emailField, "Email is required");
-      if (!firstEmptyField) {
-        firstEmptyField = emailField;
-      }
     }
   }
 
@@ -132,39 +95,29 @@ function validateCurrentStep() {
       if (!firstEmptyField) {
         firstEmptyField = phoneField;
       }
-    } else if (!phoneField.value && phoneField.hasAttribute("required")) {
-      phoneField.classList.add("error-field");
-      addErrorMessage(phoneField, "Phone number is required");
-      if (!firstEmptyField) {
-        firstEmptyField = phoneField;
+    }
+  }
+
+  // Special validation for captcha (only if captchaDisplay exists)
+  const captchaDisplay = document.getElementById("captchaDisplay");
+  if (captchaDisplay) {
+    const captchaField = stepElement.querySelector('input[name="captcha"]');
+    if (captchaField) {
+      const expectedCaptcha = captchaDisplay.textContent;
+      if (
+        captchaField.value &&
+        captchaField.value.toUpperCase() !== expectedCaptcha
+      ) {
+        captchaField.classList.add("error-field");
+        addErrorMessage(captchaField, "Captcha code is incorrect");
+        if (!firstEmptyField) {
+          firstEmptyField = captchaField;
+        }
       }
     }
   }
 
-  // Special validation for captcha
-  const captchaField = stepElement.querySelector('input[name="captcha"]');
-  if (captchaField) {
-    const expectedCaptcha =
-      document.getElementById("captchaDisplay").textContent;
-    if (
-      captchaField.value &&
-      captchaField.value.toUpperCase() !== expectedCaptcha
-    ) {
-      captchaField.classList.add("error-field");
-      addErrorMessage(captchaField, "Captcha code is incorrect");
-      if (!firstEmptyField) {
-        firstEmptyField = captchaField;
-      }
-    } else if (!captchaField.value && captchaField.hasAttribute("required")) {
-      captchaField.classList.add("error-field");
-      addErrorMessage(captchaField, "Captcha is required");
-      if (!firstEmptyField) {
-        firstEmptyField = captchaField;
-      }
-    }
-  }
-
-  // Validate terms checkbox
+  // Validate terms checkbox (only if terms field exists)
   const termsField = stepElement.querySelector('input[name="terms"]');
   if (
     termsField &&
@@ -187,7 +140,6 @@ function validateCurrentStep() {
 }
 
 function addErrorMessage(field, message) {
-  // Remove existing error message for this field
   const existingMessage = field.parentNode.querySelector(
     ".field-error-message"
   );
@@ -195,7 +147,6 @@ function addErrorMessage(field, message) {
     existingMessage.remove();
   }
 
-  // Create new error message
   const errorDiv = document.createElement("div");
   errorDiv.className = "field-error-message";
   errorDiv.textContent = message;
@@ -206,44 +157,138 @@ function addErrorMessage(field, message) {
     font-weight: 500;
   `;
 
-  // Insert after the field
   field.parentNode.insertBefore(errorDiv, field.nextSibling);
 }
 
 function updateProgressBar() {
   const progressBar = document.getElementById("progressFill");
-  if (currentStep === 1) {
-    progressBar.style.width = "1%";
-  } else if (currentStep === 2) {
-    progressBar.style.width = "50%";
-  } else if (currentStep === 3) {
-    progressBar.style.width = "90%";
+  const currentStepSpan = document.getElementById("currentStep");
+  const totalSteps = currentStepSpan ? parseInt(currentStepSpan.textContent) || 2 : 2;
+  
+  if (totalSteps === 3) {
+    // For index.html (3 steps)
+    if (currentStep === 1) {
+      progressBar.style.width = "5%";
+    } else if (currentStep === 2) {
+      progressBar.style.width = "50%";
+    } else if (currentStep === 3) {
+      progressBar.style.width = "100%";
+    }
+  } else {
+    // For patent-attorney-form.html (2 steps)
+    if (currentStep === 1) {
+      progressBar.style.width = "5%";
+    } else if (currentStep === 2) {
+      progressBar.style.width = "100%";
+    }
   }
 }
 
-// Captcha functionality
-function generateCaptcha() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
-  for (let i = 0; i < 4; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+// Iframe resize functionality
+function resizeIframe() {
+  const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({
+      type: 'resizeIframe',
+      height: height + 20
+    }, '*');
   }
-  document.getElementById("captchaDisplay").textContent = result;
-  return result;
+}
+
+function showLoadingSpinner() {
+  const existingSpinner = document.querySelector(".loading-overlay");
+  if (existingSpinner) {
+    existingSpinner.remove();
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "loading-overlay";
+
+  overlay.innerHTML = `
+    <div class="pl">
+      <svg class="pl__rings" viewBox="0 0 128 128" width="128px" height="128px">
+        <g fill="none" stroke-linecap="round" stroke-width="4">
+          <g class="pl__ring">
+            <circle class="pl__ring" r="56" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
+          </g>
+          <g class="pl__ring">
+            <circle class="pl__ring" r="52" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
+          </g>
+          <g class="pl__ring">
+            <circle class="pl__ring" r="48" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
+          </g>
+          <g class="pl__ring">
+            <circle class="pl__ring" r="44" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
+          </g>
+        </g>
+        <g fill="none" class="pl__worm">
+          <path class="pl__worm" d="M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938,21.267,27.165,20.755,40.049-.76,19.438-33.841,22.079-42.234,9.772C27.72,34.562,85.19,22.688,92,15.492Z"></path>
+        </g>
+      </svg>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+function hideLoadingSpinner() {
+  const spinner = document.querySelector(".loading-overlay");
+  if (spinner) {
+    spinner.remove();
+  }
+}
+
+function showMessage(message, type) {
+  const existingMessage = document.querySelector(".form-message");
+  if (existingMessage) {
+    existingMessage.remove();
+  }
+
+  const messageDiv = document.createElement("div");
+  messageDiv.className = `form-message ${type}`;
+  messageDiv.textContent = message;
+
+  messageDiv.style.cssText = `
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+    ${
+      type === "success"
+        ? "background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;"
+        : "background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;"
+    }
+  `;
+
+  const form = document.getElementById("confidentialityForm");
+  form.insertBefore(messageDiv, form.firstChild);
+
+  if (type === "success") {
+    setTimeout(() => {
+      if (messageDiv.parentNode) {
+        messageDiv.remove();
+      }
+    }, 5000);
+  }
 }
 
 // Initialize the form
 document.addEventListener("DOMContentLoaded", () => {
   updateProgressBar();
+  resizeIframe();
 
-  // Generate initial captcha
-  generateCaptcha();
+  // Generate captcha if it exists (for index.html)
+  const captchaDisplay = document.getElementById("captchaDisplay");
+  if (captchaDisplay) {
+    generateCaptcha();
+  }
 
   // Phone number formatting
   const phoneInput = document.getElementById("phone");
   if (phoneInput) {
     phoneInput.addEventListener("input", function (e) {
-      let x = e.target.value.replace(/\D/g, ""); // remove non-digits
+      let x = e.target.value.replace(/\D/g, "");
       if (x.length > 0) x = "(" + x;
       if (x.length > 4) x = x.slice(0, 4) + ") " + x.slice(4);
       if (x.length > 9) x = x.slice(0, 9) + "-" + x.slice(9);
@@ -255,29 +300,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const budgetProfileCheckboxes = document.querySelectorAll(
     'input[name="budgetProfile"]'
   );
-  budgetProfileCheckboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", function () {
-      if (this.checked) {
-        budgetProfileCheckboxes.forEach((cb) => {
-          if (cb !== this) cb.checked = false;
-        });
-      }
+  if (budgetProfileCheckboxes.length > 0) {
+    budgetProfileCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", function () {
+        if (this.checked) {
+          budgetProfileCheckboxes.forEach((cb) => {
+            if (cb !== this) cb.checked = false;
+          });
+        }
+      });
     });
-  });
+  }
 
   // Make hasSetBudget checkboxes mutually exclusive (radio button behavior)
   const hasSetBudgetCheckboxes = document.querySelectorAll(
     'input[name="hasSetBudget"]'
   );
-  hasSetBudgetCheckboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", function () {
-      if (this.checked) {
-        hasSetBudgetCheckboxes.forEach((cb) => {
-          if (cb !== this) cb.checked = false;
-        });
+  if (hasSetBudgetCheckboxes.length > 0) {
+    hasSetBudgetCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", function () {
+        if (this.checked) {
+          hasSetBudgetCheckboxes.forEach((cb) => {
+            if (cb !== this) cb.checked = false;
+          });
+        }
+      });
+    });
+  }
+
+  // Show/hide "other" text field when "other" radio is selected
+  const otherField = document.querySelector(".one-stop-inv .other_feild");
+  if (otherField) {
+    otherField.style.display = "none";
+    
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.name === 'hear_about_us' && e.target.type === 'radio') {
+        if (e.target.id === 'other_' && e.target.checked) {
+          otherField.style.display = "block";
+        } else {
+          otherField.style.display = "none";
+        }
       }
     });
-  });
+    
+    const otherRadio = document.getElementById('other_');
+    if (otherRadio && otherRadio.checked) {
+      otherField.style.display = "block";
+    }
+  }
 
   // Handle form submission
   document
@@ -285,26 +355,18 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Final validation before submission
       if (!validateCurrentStep()) {
         showMessage("Please correct the errors and try again.", "error");
         return;
       }
 
-      // Show loading overlay immediately
       showLoadingSpinner();
 
       const formData = new FormData(e.target);
 
-      // Debug: Log form data being sent
-      console.log("Form data being sent:");
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
       try {
         const response = await fetch(
-          "https://form-code-backend.vercel.app/submit-form",
+          "/submit-form",
           {
             method: "POST",
             body: formData,
@@ -312,20 +374,18 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (response.ok) {
-          // Hide loading and show success message
           hideLoadingSpinner();
           showMessage(
             "Form submitted successfully! We will contact you soon.",
             "success"
           );
-          // Reset form
           e.target.reset();
-          // Reset to first step
           goToStep(1);
-          // Regenerate captcha
-          generateCaptcha();
+          // Regenerate captcha if it exists
+          if (captchaDisplay) {
+            generateCaptcha();
+          }
         } else {
-          // Hide loading and show error message
           hideLoadingSpinner();
           const errorData = await response.json().catch(() => ({}));
           showMessage(
@@ -334,99 +394,15 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
       } catch (error) {
-        console.error("Error:", error);
-        // Hide loading and show error message
+        console.error("Full error details:", error);
         hideLoadingSpinner();
         showMessage(
-          "Error submitting form. Please check your connection and try again.",
+          "Error: " + (error.message || "Unknown error") + ". Please check your connection and try again.",
           "error"
         );
       }
     });
 
-  function showLoadingSpinner() {
-    // Remove any existing spinner
-    const existingSpinner = document.querySelector(".loading-overlay");
-    if (existingSpinner) {
-      existingSpinner.remove();
-    }
-
-    // Create loading overlay
-    const overlay = document.createElement("div");
-    overlay.className = "loading-overlay";
-
-    // Create spinner HTML
-    overlay.innerHTML = `
-      <div class="pl">
-        <svg class="pl__rings" viewBox="0 0 128 128" width="128px" height="128px">
-          <g fill="none" stroke-linecap="round" stroke-width="4">
-            <g class="pl__ring">
-              <circle class="pl__ring" r="56" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-            </g>
-            <g class="pl__ring">
-              <circle class="pl__ring" r="52" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-            </g>
-            <g class="pl__ring">
-              <circle class="pl__ring" r="48" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-            </g>
-            <g class="pl__ring">
-              <circle class="pl__ring" r="44" cx="64" cy="64" transform="rotate(-90,64,64)"></circle>
-            </g>
-          </g>
-          <g fill="none" class="pl__worm">
-            <path class="pl__worm" d="M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938,21.267,27.165,20.755,40.049-.76,19.438-33.841,22.079-42.234,9.772C27.72,34.562,85.19,22.688,92,15.492Z"></path>
-          </g>
-        </svg>
-      </div>
-    `;
-
-    document.body.appendChild(overlay);
-  }
-
-  function hideLoadingSpinner() {
-    const spinner = document.querySelector(".loading-overlay");
-    if (spinner) {
-      spinner.remove();
-    }
-  }
-
-  function showMessage(message, type) {
-    // Remove any existing message
-    const existingMessage = document.querySelector(".form-message");
-    if (existingMessage) {
-      existingMessage.remove();
-    }
-
-    // Create message element
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `form-message ${type}`;
-    messageDiv.textContent = message;
-
-    // Style the message
-    messageDiv.style.cssText = `
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      border-radius: 4px;
-      font-weight: 500;
-      text-align: center;
-      ${
-        type === "success"
-          ? "background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;"
-          : "background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;"
-      }
-    `;
-
-    // Insert message at the top of the form
-    const form = document.getElementById("confidentialityForm");
-    form.insertBefore(messageDiv, form.firstChild);
-
-    // Auto-hide success messages after 5 seconds
-    if (type === "success") {
-      setTimeout(() => {
-        if (messageDiv.parentNode) {
-          messageDiv.remove();
-        }
-      }, 5000);
-    }
-  }
+  // Listen for window resize
+  window.addEventListener('resize', resizeIframe);
 });

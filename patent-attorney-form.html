@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patent Attorney Form</title>
+    <link rel="stylesheet" href="form-style.css">
+</head>
+
+<body>
+    <div class="one-stop-inv grid-wrapper">
+        <div class="grid-background"></div>
+        <div class="container">
+            <div class="header">
+                <h1 class="form-heading">Patent Attorney Form</h1>
+               
+                <p>
+                    By completing this Patent Partner form, we will have a little more detail about you or your firm and our team can reach out and begin to explain our partner program.
+                </p>
+            </div>
+
+            <div class="progress-container">
+                <div class="step-indicator">
+                    Step <span id="currentStep" class="current-step">1</span> of 2
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-fill-bar" id="progressFill"></div>
+                </div>
+            </div>
+
+            <form id="confidentialityForm" class="confidentiality-form"
+                action="/submit-form" method="post" enctype="multipart/form-data">
+                <!-- Step 1 -->
+                <div class="form-step step1" id="step1">
+                    <div class="form-group">
+                        <label class="required">Name</label>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <input type="text" name="firstName" placeholder="First" required />
+                            </div>
+                            <div class="form-field">
+                                <input type="text" name="lastName" placeholder="Last" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="email-label required">Email</label>
+                        <input type="email" name="email" class="email-input" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">Phone</label>
+                        <input type="tel" id="phone" name="phone" class="phone-input" placeholder="(___) ___-____"
+                            maxlength="14" required />
+                    </div>
+
+                    <button type="button" class="next-btn" onclick="goToStep(2)">
+                        Next
+                    </button>
+                </div>
+
+
+                <!-- Step 2 -->
+                <div class="form-step step2" id="step2" style="display: none">
+                    <div class="form-group" style="margin-top: 30px;">
+                        <label>Name of your firm (If applicable)</label>
+                        <input type="text" name="Nameofyourfirm" placeholder="Name of your firm" />
+                        <!-- <p class="file-info">0 of 65 max characters</p> -->
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Website (If applicable)</label>
+                        <input type="text" name="YourWebsite" placeholder="Your Website" />
+                        <!-- <p class="file-info">0 of 65 max characters</p> -->
+                    </div>
+
+                    <div class="form-group">
+                        <label>How many clients are you currently working with that involve physical products?
+                            (Estimated)</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" name="clients_count" value="0-10" id="clients_0_10" />
+                                <label for="clients_0_10">0-10</label>
+                            </div>
+
+                            <div class="radio-item">
+                                <input type="radio" name="clients_count" value="10-20" id="clients_10_20" />
+                                <label for="clients_10_20">10-20</label>
+                            </div>
+
+                            <div class="radio-item">
+                                <input type="radio" name="clients_count" value="20-50" id="clients_20_50" />
+                                <label for="clients_20_50">20-50</label>
+                            </div>
+
+                            <div class="radio-item">
+                                <input type="radio" name="clients_count" value="50+" id="clients_50_plus" />
+                                <label for="clients_50_plus">50+</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Have you ever worked with another product development company?</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" name="worked_with_company" value="Yes" id="product_development_yes" />
+                                <label for="product_development_yes">Yes</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="worked_with_company" value="No" id="product_development_no" />
+                                <label for="product_development_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>In your clients' patent experience, how involved are you after their patent has been
+                            granted?</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" name="patent_involvement" value="Not very involved"
+                                    id="Not_very_involved" />
+                                <label for="Not_very_involved">Not very involved</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="patent_involvement" value="Somewhat involved"
+                                    id="Somewhat_involved" checked />
+                                <label for="Somewhat_involved">Somewhat involved</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="patent_involvement" value="Very involved" id="Very_involved" />
+                                <label for="Very_involved">Very involved</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Are you interested in seeing more success stories from your clients that received your
+                            patent services?</label>
+                            <p>Many inventors come to us after they get their patent, and we help them prototype their product and bring them to market. By having us as a partner with you, they have the potential to become a success story, not just for us, but for the patent firm/attorney that helped them file.</p>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" name="success_stories" value="Yes, that would be great"
+                                    id="Yes_that_would_be_great" />
+                                <label for="Yes_that_would_be_great">Yes, that would be great</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="success_stories" value="No, I don't care for it"
+                                    id="No_I_dont_care_for_it" checked />
+                                <label for="No_I_dont_care_for_it">No, I don't care for it</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>How did you hear about us?</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" name="hear_about_us" value="Facebook" id="facebook_social" />
+                                <label for="facebook_social">Facebook</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="hear_about_us" value="LinkedIn" id="linkedIn_social" />
+                                <label for="linkedIn_social">LinkedIn</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="hear_about_us" value="Phone Call" id="phone_call" />
+                                <label for="phone_call">Phone Call</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="hear_about_us" value="Google" id="google_" />
+                                <label for="google_">Google</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="hear_about_us" value="other" id="other_" />
+                                <label for="other_">other</label>
+                                <div class="other_feild">
+                                    <input type="text" name="other_text" placeholder="Please specify" id="other_text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="prev-btn" onclick="goToStep(1)">
+                            Previous
+                        </button>
+                        <button type="submit" class="submit-btn">Submit</button>
+                    </div>
+                </div>
+
+            
+            </form>
+
+            <div class="footer-link">
+                <a href="#">Confidentiality Form</a>
+            </div>
+        </div>
+    </div>
+    <script src="form-script.js"></script>
+</body>
+
+</html>
